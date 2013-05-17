@@ -42,13 +42,16 @@ V2_COLLECTION_PARAMS = [
     ]
 
 class ZendeskError(Exception):
-    def __init__(self, msg, error_code=None):
+    def __init__(self, msg, error=None):
         self.msg = msg
-        self.error_code = error_code
+        self.error_code = int(error['status'])
+
         # Zendesk will throw a 401 response for un-authneticated call
         if self.error_code == 401:
             raise AuthenticationError(self.msg)
-
+        if self.error_code == 429:
+            self.retry_after = error['retry-after']
+            raise ExceededLimitError(self.msg, self.error_code, self.retry_after)
     def __str__(self):
         return repr('%s: %s' % (self.error_code, self.msg))
 
@@ -59,6 +62,16 @@ class AuthenticationError(ZendeskError):
 
     def __str__(self):
         return repr(self.msg)
+    
+class ExceededLimitError(ZendeskError):
+    def __init__(self, msg, error_code, retry_after):
+        self.msg = msg
+        self.error_code = error_code
+        self.retry_after = retry_after
+        
+    def __str__(self):
+        return repr('%s: %s: Retry: %s' % (self.error_code, self.msg, self.retry_after))
+
 
 
 re_identifier = re.compile(r".*/(?P<identifier>\d+)\.(json|xml)")
@@ -219,7 +232,8 @@ class Zendesk(object):
             raise ZendeskError('Response Not Found')
         response_status = int(response.get('status', 0))
         if response_status != status:
-            raise ZendeskError(content, response_status)
+            #raise ZendeskError(content, response_status)
+            raise ZendeskError(content, response)
 
         # Deserialize json content if content exist. In some cases Zendesk
         # returns ' ' strings. Also return false non strings (0, [], (), {})
@@ -227,5 +241,6 @@ class Zendesk(object):
             return response.get('location')
         elif content.strip():
             return json.loads(content)
+            #return { "response": response, "content": json.loads(content) }
         else:
             return responses[response_status]
