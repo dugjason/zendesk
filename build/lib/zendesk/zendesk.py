@@ -73,7 +73,7 @@ class Zendesk(object):
 
     def __init__(self, zendesk_url, zendesk_username=None,
                  zendesk_password=None, use_api_token=False, headers=None,
-                 client_args={}, api_version=2):
+                 client_args={}, api_version=1):
         """
         Instantiates an instance of Zendesk. Takes optional parameters for
         HTTP Basic Authentication
@@ -151,8 +151,6 @@ class Zendesk(object):
             if self.api_version == 2:
                 path = "/api/v2" + path
                 
-            print path
-
             method = api_map['method']
             status = api_map['status']
             valid_params = api_map.get('valid_params', ())
