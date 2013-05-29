@@ -49,12 +49,12 @@ class ZendeskError(Exception):
         # Zendesk will throw a 401 response for un-authneticated call
         if self.error_code == 401:
             raise AuthenticationError(self.msg)
+        # Zendesk will throw a 403 response for exceeding the API limit
         if self.error_code == 429:
             self.retry_after = error['retry-after']
             raise ExceededLimitError(self.msg, self.error_code, self.retry_after)
     def __str__(self):
         return repr('%s: %s' % (self.error_code, self.msg))
-
 
 class AuthenticationError(ZendeskError):
     def __init__(self, msg):
@@ -232,7 +232,6 @@ class Zendesk(object):
             raise ZendeskError('Response Not Found')
         response_status = int(response.get('status', 0))
         if response_status != status:
-            #raise ZendeskError(content, response_status)
             raise ZendeskError(content, response)
 
         # Deserialize json content if content exist. In some cases Zendesk
