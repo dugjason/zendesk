@@ -156,6 +156,37 @@ mapping_table = {
         'path': '/users/me.json',
         'method': 'GET',
     },
+                 
+    # User Fields
+    'list_user_fields': {
+        'path': '/user_fields.json',
+        'method': 'GET',
+    },
+                 
+    'show_user_field': {
+        'path': '/user_fields/{{field_id}}.json',
+        'method': 'GET',
+    },
+                 
+    'create_user_fields': {
+        'path': '/user_fields.json',
+        'method': 'POST',
+    },
+                 
+    'update_user_fields': {
+        'path': '/user_fields/{{field_id}}.json',
+        'method': 'PUT',
+    },
+                 
+    'delete_user_field': {
+        'path': '/user_fields/{{field_id}}.json',
+        'method': 'DELETE',
+    },
+                 
+    'reorder_user_field': {
+        'path': '/user_fields/reorder.json',
+        'method': 'PUT',
+    },
 
     # Requests
     'list_requests': {
@@ -340,6 +371,32 @@ mapping_table = {
     },
     'delete_organization': {
         'path': '/organizations.json',
+        'method': 'DELETE',
+    },
+                 
+    # Organization Fields
+    'list_organization_fields': {
+        'path': '/organization_fields.json',
+        'method': 'GET',
+    },
+                 
+    'show_organization_field': {
+        'path': '/organization_fields/{{field_id}}.json',
+        'method': 'GET',
+    },
+                 
+    'create_organization_fields': {
+        'path': '/organization_fields.json',
+        'method': 'POST',
+    },
+                 
+    'update_organization_fields': {
+        'path': '/organization_fields/{{field_id}}.json',
+        'method': 'PUT',
+    },
+                 
+    'delete_organization_fields': {
+        'path': '/organization_fields/{{field_id}}.json',
         'method': 'DELETE',
     },
 

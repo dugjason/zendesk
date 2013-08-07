@@ -390,7 +390,7 @@ mapping_table = {
         'method': 'POST',
     },
                  
-    'create_organization_fields': {
+    'update_organization_fields': {
         'path': '/organization_fields/{{field_id}}.json',
         'method': 'PUT',
     },
