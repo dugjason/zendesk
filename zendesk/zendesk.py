@@ -202,7 +202,7 @@ class Zendesk(object):
                     self.client.request(
                         url,
                         method,
-                        body=json.dumps(body),
+                        body=json.dumps(body, ensure_ascii=False),
                         headers=self.headers
                     )
             # Use a response handler to determine success/fail
@@ -239,7 +239,7 @@ class Zendesk(object):
         if response.get('location'):
             return response.get('location')
         elif content.strip():
-            return json.loads(content)
+            return json.loads(content, 'utf-8')
             #return { "response": response, "content": json.loads(content) }
         else:
             return responses[response_status]
