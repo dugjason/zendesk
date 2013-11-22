@@ -355,7 +355,7 @@ mapping_table = {
     'autocomplete_organizations': {
         'path': '/organizations/autocomplete.json',
         'valid_params': ['name'],
-        'method': 'GET',
+        'method': 'POST',
     },
     'show_organizations': {
         'path': '/organizations/{{organization_id}}.json',
