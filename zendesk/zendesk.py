@@ -184,13 +184,13 @@ class Zendesk(object):
 
             # Use dictionary structure to map out calls by HTTP method
             methods = {
-                'GET'   : requests.get(url, auth=self.auth, data=json.dumps(body), headers=self.headers),
-                'POST'  : requests.post(url, auth=self.auth, data=json.dumps(body), headers=self.headers),
-                'PUT'   : requests.put(url, auth=self.auth, data=json.dumps(body), headers=self.headers),
-                'DELETE': requests.delete(url, auth=self.auth, headers=self.headers)
+                'GET'   : requests.get,
+                'POST'  : requests.post,
+                'PUT'   : requests.put,
+                'DELETE': requests.delete
             }
 
-            response = methods[method]
+            response = methods[method](url, auth=self.auth, data=json.dumps(body), headers=self.headers)
             # Use a response handler to determine success/fail
             return self._response_handler(response, response.content, status)
 
