@@ -6,32 +6,28 @@ account in their application.
 
 
 Requirements
------------------------------------------------------------------------------------------------------
-httplib2 is used for authentication and requests
+------------
+[Requests](http://www.python-requests.org/en/latest/) is used for authentication and requests
 
-    (pip install | easy_install) httplib2
-
-simplejson is used to serialze and deserialze requests and responses
-
-    (pip install | easy_install) simplejson
+    (pip install | easy_install) requests
 
 
 Installation
------------------------------------------------------------------------------------------------------
-Zendesk Python Library is available on pypi, so installation should be fairly simple:
+------------
+This Zendesk Python Library has been forked and modified ([eventbrite/zendesk](https://github.com/eventbrite/zendesk)) and must be compiled from source
 
-    (pip install | easy_install) zendesk
+    python setup.py install
 
 
 Example Use
------------------------------------------------------------------------------------------------------
+-----------
 
-	from zendesk import Zendesk, get_id_from_url
+	from zendesk import Zendesk
 
 	################################################################
 	## NEW CONNECTION CLIENT
 	################################################################
-	zendesk = Zendesk('https://yourcompany.zendesk.com', 'you@yourcompany.com', 'passwd')
+	zendesk = Zendesk('https://yourcompany.zendesk.com', 'you@yourcompany.com', 'passwd', api_version=2)
 
 	################################################################
 	## TICKETS
