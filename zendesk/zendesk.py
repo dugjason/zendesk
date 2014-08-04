@@ -48,7 +48,7 @@ class ZendeskError(Exception):
         # Zendesk will throw a 403 response for exceeding the API limit
         if self.error_code == 429:
             self.retry_after = msg['retry-after']
-            raise ExceededLimitError(self.msg, self.error_code, self.retry_after)
+            raise ExceededLimitError(self.msg['msg'], self.error_code, self.retry_after)
     def __str__(self):
         return repr('%s: %s' % (self.error_code, self.msg))
 
@@ -218,7 +218,15 @@ class Zendesk(object):
             raise ZendeskError('Response Not Found')
         response_status = int(response.status_code)
         if response_status != status:
-            raise ZendeskError(json.loads(content), response.status_code)
+            try:
+                decoded = json.loads(content)
+                raise ZendeskError(json.loads(content), response.status_code)
+            except Exception:
+                message = {
+                    "retry-after"   : response.headers['retry-after'],
+                    "msg"           : content
+                }
+                raise ZendeskError(message, response.status_code)
 
         # Deserialize json content if content exist. In some cases Zendesk
         # returns ' ' strings. Also return false non strings (0, [], (), {})
