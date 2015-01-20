@@ -222,10 +222,15 @@ class Zendesk(object):
                 decoded = json.loads(content)
                 raise ZendeskError(json.loads(content), response.status_code)
             except Exception:
-                message = {
-                    "retry-after"   : response.headers['retry-after'],
-                    "msg"           : content
-                }
+                #print content
+                #print response.status_code
+                message = {}
+                
+                if 'retry-after' in response.headers:
+                    message['retry-after'] = response.headers['retry-after']
+                
+                message['msg'] = content
+
                 raise ZendeskError(message, response.status_code)
 
         # Deserialize json content if content exist. In some cases Zendesk
