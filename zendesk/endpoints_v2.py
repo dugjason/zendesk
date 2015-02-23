@@ -61,22 +61,29 @@ mapping_table = {
         'method': 'GET',
     },
 
+    # Satisfaction Ratings
+    'satisfaction_ratings': {
+        'path': '/satisfaction_ratings.json',
+        'valid_params': ['score', 'start_time', 'end_time'],
+        'method': 'GET',
+    },
+
     # Incremental Exports
     'incremental_tickets' : {
         'path': '/incremental/tickets.json',
-        'valid_params': ['start_time'],
+        'valid_params': ['start_time', 'include'],
         'method': 'GET',
     },
 
     'incremental_ticket_events' : {
         'path': '/incremental/ticket_events.json',
-        'valid_params': ['start_time'],
+        'valid_params': ['start_time', 'include'],
         'method': 'GET',
     },
 
     'incremental_organizations' : {
         'path': '/incremental/organizations.json',
-        'valid_params': ['start_time'],
+        'valid_params': ['start_time', 'include'],
         'method': 'GET',
     },
 
