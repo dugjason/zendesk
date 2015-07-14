@@ -44,6 +44,11 @@ mapping_table = {
         'method': 'GET',
     },
 
+    # Ticket Comments
+    'list_ticket_comments': {
+        'path': '/tickets/{{ticket_id}}/comments.json',
+        'method': 'GET',
+    },
     # Ticket Audits
     'list_audits': {
         'path': '/tickets/{{ticket_id}}/audits.json',
@@ -64,7 +69,7 @@ mapping_table = {
     # Satisfaction Ratings
     'satisfaction_ratings': {
         'path': '/satisfaction_ratings.json',
-        'valid_params': ['score', 'start_time', 'end_time'],
+        'valid_params': ['score', 'start_time', 'end_time', 'page'],
         'method': 'GET',
     },
 
