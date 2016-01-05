@@ -3,7 +3,13 @@ from zendesk import Zendesk
 ################################################################
 ## NEW CONNECTION CLIENT
 ################################################################
-zendesk = Zendesk('https://yourcompany.zendesk.com', 'you@yourcompany.com', 'passwd')
+zendesk = Zendesk(
+    zendesk_url='https://yourcompany.zendesk.com',
+    zendesk_username='you@yourcompany.com',
+    zendesk_password='PASSWORD_OR_API_TOKEN',
+    use_api_token=True,
+    api_version=2
+)
 
 # Are you getting an error such as...
 # "SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed"?
@@ -64,11 +70,15 @@ zendesk.list_organizations()
 # Create
 new_org = {
     'organization': {
-        'name': 'Starbucks Corp'
+        'name': 'Starbucks Corp',
+        'external_id': 'crm_abc123'
     }
 }
 org_url = zendesk.create_organization(data=new_org)
 org_id = get_id_from_url(org_url)
+
+# Search by External ID
+zendesk.search_organizations(external_id='crm_abc123')
 
 # Show
 zendesk.show_organization(organization_id=org_id)
