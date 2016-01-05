@@ -21,17 +21,13 @@
 """
 
 __author__ = "Max Gutman <max@eventbrite.com>"
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import re
-import httplib2
 import urllib
 import base64
-try:
-    import simplejson as json
-except:
-    import json
-from httplib import responses
+import json
+import requests
 from endpoints import mapping_table as mapping_table_v1
 from endpoints_v2 import mapping_table as mapping_table_v2
 
@@ -44,41 +40,33 @@ V2_COLLECTION_PARAMS = [
 class ZendeskError(Exception):
     def __init__(self, msg, error=None):
         self.msg = msg
-        self.error_code = int(error['status'])
+        self.error_code = int(error)
 
         # Zendesk will throw a 401 response for un-authneticated call
         if self.error_code == 401:
             raise AuthenticationError(self.msg)
         # Zendesk will throw a 403 response for exceeding the API limit
         if self.error_code == 429:
-            self.retry_after = error['retry-after']
-            raise ExceededLimitError(self.msg, self.error_code, self.retry_after)
+            self.retry_after = msg['retry-after']
+            raise ExceededLimitError(self.msg['msg'], self.error_code, self.retry_after)
     def __str__(self):
         return repr('%s: %s' % (self.error_code, self.msg))
 
 class AuthenticationError(ZendeskError):
     def __init__(self, msg):
-        self.msg = msg
+        self.msg = str(msg['error'])
 
     def __str__(self):
         return repr(self.msg)
-    
+
 class ExceededLimitError(ZendeskError):
     def __init__(self, msg, error_code, retry_after):
         self.msg = msg
         self.error_code = error_code
         self.retry_after = retry_after
-        
+
     def __str__(self):
         return repr('%s: %s: Retry: %s' % (self.error_code, self.msg, self.retry_after))
-
-
-
-re_identifier = re.compile(r".*/(?P<identifier>\d+)\.(json|xml)")
-def get_id_from_url(url):
-    match = re_identifier.match(url)
-    if match and match.group('identifier'):
-        return match.group('identifier')
 
 
 class Zendesk(object):
@@ -118,13 +106,13 @@ class Zendesk(object):
         if self.headers is None:
             self.headers = {
                 'User-agent': 'Zendesk Python Library v%s' % __version__,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'charset':'utf-8'
             }
 
-        # Set http client and authentication
-        self.client = httplib2.Http(**client_args)
+        # Set up authentication
         if self.zendesk_username is not None and self.zendesk_password is not None:
-            self.client.add_credentials(
+            self.auth = (
                 self.zendesk_username,
                 self.zendesk_password
             )
@@ -153,9 +141,6 @@ class Zendesk(object):
         it looks to find a relationship in the the mapping table.  The
         table provides the structure of the API call and parameters passed
         in the method will populate missing data.
-
-        TODO:
-            Should probably url-encode GET query parameters on replacement
         """
         def call(self, **kwargs):
             """ """
@@ -163,7 +148,7 @@ class Zendesk(object):
             path = api_map['path']
             if self.api_version == 2:
                 path = "/api/v2" + path
-                
+
             method = api_map['method']
             status = api_map['status']
             valid_params = api_map.get('valid_params', ())
@@ -197,16 +182,17 @@ class Zendesk(object):
             elif "Authorization" in self.headers:
                 del(self.headers["Authorization"])
 
-            # Make an http request (data replacements are finalized)
-            response, content = \
-                    self.client.request(
-                        url,
-                        method,
-                        body=json.dumps(body, ensure_ascii=False),
-                        headers=self.headers
-                    )
+            # Use dictionary structure to map out calls by HTTP method
+            methods = {
+                'GET'   : requests.get,
+                'POST'  : requests.post,
+                'PUT'   : requests.put,
+                'DELETE': requests.delete
+            }
+
+            response = methods[method](url, auth=self.auth, data=json.dumps(body), headers=self.headers)
             # Use a response handler to determine success/fail
-            return self._response_handler(response, content, status)
+            return self._response_handler(response, response.content, status)
 
         # Missing method is also not defined in our mapping table
         if api_call not in self.mapping_table:
@@ -217,7 +203,7 @@ class Zendesk(object):
 
     @staticmethod
     def _response_handler(response, content, status):
-        """ 
+        """
         Handle response as callback
 
         If the response status is different from status defined in the
@@ -228,18 +214,34 @@ class Zendesk(object):
         the body of 'content' has our response.
         """
         # Just in case
-        if not response:
+        if not response.status_code:
             raise ZendeskError('Response Not Found')
-        response_status = int(response.get('status', 0))
+        response_status = int(response.status_code)
         if response_status != status:
-            raise ZendeskError(content, response)
+            try:
+                decoded = json.loads(content)
+                raise ZendeskError(json.loads(content), response.status_code)
+            except Exception:
+                #print content
+                #print response.status_code
+                message = {}
+
+                if 'retry-after' in response.headers:
+                    message['retry-after'] = response.headers['retry-after']
+
+                message['msg'] = content
+
+                raise ZendeskError(message, response.status_code)
 
         # Deserialize json content if content exist. In some cases Zendesk
         # returns ' ' strings. Also return false non strings (0, [], (), {})
-        if response.get('location'):
-            return response.get('location')
-        elif content.strip():
-            return json.loads(content, 'utf-8')
-            #return { "response": response, "content": json.loads(content) }
+        if content.strip():
+            try:
+                decoded = json.loads(content)
+                if len(decoded) > 0: return decoded
+            except Exception:
+                pass
+        if response.headers.get('location'):
+            return response.headers['location']
         else:
             return responses[response_status]
