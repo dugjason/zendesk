@@ -21,7 +21,7 @@
 """
 
 __author__ = "Max Gutman <max@eventbrite.com>"
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import re
 import urllib
@@ -58,13 +58,13 @@ class AuthenticationError(ZendeskError):
 
     def __str__(self):
         return repr(self.msg)
-    
+
 class ExceededLimitError(ZendeskError):
     def __init__(self, msg, error_code, retry_after):
         self.msg = msg
         self.error_code = error_code
         self.retry_after = retry_after
-        
+
     def __str__(self):
         return repr('%s: %s: Retry: %s' % (self.error_code, self.msg, self.retry_after))
 
@@ -148,7 +148,7 @@ class Zendesk(object):
             path = api_map['path']
             if self.api_version == 2:
                 path = "/api/v2" + path
-                
+
             method = api_map['method']
             status = api_map['status']
             valid_params = api_map.get('valid_params', ())
@@ -203,7 +203,7 @@ class Zendesk(object):
 
     @staticmethod
     def _response_handler(response, content, status):
-        """ 
+        """
         Handle response as callback
 
         If the response status is different from status defined in the
@@ -225,10 +225,10 @@ class Zendesk(object):
                 #print content
                 #print response.status_code
                 message = {}
-                
+
                 if 'retry-after' in response.headers:
                     message['retry-after'] = response.headers['retry-after']
-                
+
                 message['msg'] = content
 
                 raise ZendeskError(message, response.status_code)
