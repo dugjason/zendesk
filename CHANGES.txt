@@ -1,3 +1,17 @@
-v1.00, 2011-04-01 -- Initial release.
-v1.1, 2011-10-05 -- Moved from zendesk xml to json.
-v1.2, 2016-01-05 -- Added support for searching organizations by external_id
+# CHANGELOG
+
+## v1.3 (2016-05-26)
+### Added
+* Support for Zendesk's "show many organizations endpoint";
+  `/api/v2/organizations/show_many.json?external_ids={external_ids}`
+
+## v1.2 (2016-01-05)
+### Added
+* Added support for searching organizations by external_id
+
+## v1.1 (2011-10-05)
+### Changed
+* Moved from Zendesk XML to JSON
+
+## v1.0 (2011-04-01)
+### Initial release

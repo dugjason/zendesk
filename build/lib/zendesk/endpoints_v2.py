@@ -398,6 +398,11 @@ mapping_table = {
         'path': '/organizations/{{organization_id}}.json',
         'method': 'GET',
     },
+    'show_many_organizations': {
+        'path': '/organizations/show_many.json',
+        'valid_params': ['external_ids'],
+        'method': 'GET',
+    },
     'search_organizations': {
         'path': '/organizations/search.json',
         'valid_params': ['external_id'],
