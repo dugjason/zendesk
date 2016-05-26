@@ -5,14 +5,14 @@ from distutils.core import setup
 setup(
 	# Basic package information.
 	name = 'Zendesk',
-	author = 'Victor Duan',
-	version = '1.2.0',
-	author_email = 'victor.duan@gmail.com',
+	author = 'Jason Dugdale',
+	version = '1.3.0',
+	author_email = 'jason.dugdale@gmail.com',
 	packages = ['zendesk'],
 	include_package_data = True,
 	install_requires = ['requests'],
 	license='LICENSE.txt',
-	url = 'https://github.com/victorduan/zendesk',
+	url = 'https://github.com/dugjason/zendesk',
 	keywords = 'zendesk api helpdesk',
 	description = 'Python API Wrapper for Zendesk',
 	classifiers = [

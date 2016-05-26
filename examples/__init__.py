@@ -83,6 +83,9 @@ zendesk.search_organizations(external_id='crm_abc123')
 # Show
 zendesk.show_organization(organization_id=org_id)
 
+# Show Many
+zendesk.show_many_organizations(external_ids='crm_abc,crm_123')
+
 # Delete
 zendesk.delete_organization(organization_id=org_id)
 
