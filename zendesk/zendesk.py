@@ -21,7 +21,7 @@
 """
 
 __author__ = "Max Gutman <max@eventbrite.com>"
-__version__ = "1.2.0"
+__version__ = "1.3.1"
 
 import re
 import urllib
@@ -219,11 +219,12 @@ class Zendesk(object):
         response_status = int(response.status_code)
         if response_status != status:
             try:
-                decoded = json.loads(content)
-                raise ZendeskError(json.loads(content), response.status_code)
+                if respone.status_code == 204:
+                    decoded = ''
+                else:
+                    decoded = json.loads(content)
+                    raise ZendeskError(json.loads(content), response.status_code)
             except Exception:
-                #print content
-                #print response.status_code
                 message = {}
 
                 if 'retry-after' in response.headers:
