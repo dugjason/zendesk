@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.3.1 (2017-03-21)
+### Fixed
+* Deleting an Organization requires an ID. Can now call `client.delete_organization(organization_id=orgId)` to delete an Organization
+
 ## v1.3 (2016-05-26)
 ### Added
 * Support for Zendesk's "show many organizations endpoint";

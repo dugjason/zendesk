@@ -417,7 +417,7 @@ mapping_table = {
         'method': 'PUT',
     },
     'delete_organization': {
-        'path': '/organizations.json',
+        'path': '/organizations/{{organization_id}}.json',
         'method': 'DELETE',
     },
 

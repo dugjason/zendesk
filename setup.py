@@ -6,7 +6,7 @@ setup(
 	# Basic package information.
 	name = 'Zendesk',
 	author = 'Jason Dugdale',
-	version = '1.3.0',
+	version = '1.3.1',
 	author_email = 'jason.dugdale@gmail.com',
 	packages = ['zendesk'],
 	include_package_data = True,
